@@ -59,7 +59,7 @@ class DistPacketGenerator:
         """The generator function used in simulations."""
         # the generator function pause for the specified initial_delay duration before continuing execution
         yield self.env.timeout(self.initial_delay) 
-        with open(r'C:\Users\reyha\Desktop\network-simulation\nspy-main\data\data.csv', 'r') as file:
+        with open(r'C:\Users\reyha\Desktop\network-simulation\Network-Simulation-with-Python\data\data.csv', 'r') as file:
             csv_reader = csv.reader(file)
             next(csv_reader)  # Skip the first line (header)
         # keeps the generator function running as long as the current simulation time
