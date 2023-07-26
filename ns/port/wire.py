@@ -38,7 +38,8 @@ class Wire:
         self.wire_id = wire_id
         self.out = None
         self.packets_rec = 0
-
+        self.begin_transmissions = {}  # Dictionary to store begin_transmission times
+        
         self.packets_dropped = 0
 
         self.debug = debug
@@ -54,6 +55,23 @@ class Wire:
         print("propagation delay is: ",self.delay_dist()) # check propagation delay
         while True:
             packet = yield self.store.get()
+            begin_transmission = packet.begin_transmission
+            packet_id = packet.packet_id
+    
+            if begin_transmission in self.begin_transmissions: 
+                # Collision
+                print(f"collision at {begin_transmission}!")
+                self.begin_transmissions[begin_transmission].append(packet_id) #  Append the current packet's ID to the list of packet IDs associated with it
+                self.packets_dropped += 1
+                print("Dropped! because of collision on wire #{} at {:.3f}: {}".format(
+                        self.wire_id, self.env.now, packet))
+            else:
+                self.begin_transmissions[begin_transmission] = [packet_id]
+           
+            # printing the list
+            # for begin_time, packet_ids in self.begin_transmissions.items():
+            #     print(f"Begin Transmission Time: {begin_time}, Packet IDs: {packet_ids}")
+
             print("good period?", self.loss_period_generator.is_good_period(packet.current_time, packet.begin_transmission))
             print("current time is: ", packet.current_time)
             # loss_dist can be removed
@@ -82,7 +100,7 @@ class Wire:
                 loss_rate = (self.packets_dropped / self.packets_rec) * 100
             else:
                 loss_rate = 0
-
+            
             print("Packet Loss Rate for Wire #{}: {:.2f}%. {} packets in total and {} packets lost".format(
                 self.wire_id, loss_rate, self.packets_rec, self.packets_dropped))
 
@@ -156,6 +174,15 @@ class LossPeriodGenerator:
             self.good_low = self.good_high + self.rng_b.exponential(self.mean_b)
             self.good_high = self.good_low + self.rng_g.exponential(self.mean_g)
             print(f"New low: {self.good_low} and new high: {self.good_high}")
+        if self.good_low <= timestamp < self.good_high:
+            if begin_transmission < self.good_low or begin_transmission >= self.good_high:
+                print(f"Timestamp {timestamp} is in a good period, but beginning of transmission {begin_transmission} is in a bad period.")
+        else:
+            print("Timestamp is in a bad period.")  
+        if self.good_low <= begin_transmission < self.good_high:
+            print("Beginning of transmission is in a good period.")
+        else:
+            print("Beginning of transmission is in a bad period.")      
         return self.good_low <= timestamp < self.good_high and self.good_low <= begin_transmission < self.good_high
     
 """example:
