@@ -63,7 +63,7 @@ def loss_dist(packet_id):
 
 # Return the loss rate (e.g., 0.2 for 20% packet loss)
 # the drop will show in logs as: At time t, packet x from "flow_y" was dropped on wire #z.
-rate = 10**6
+rate = 10**2 #10**6
 print("start!")
 env = simpy.Environment()
 print("environment activated!")
@@ -103,7 +103,7 @@ print("output of wire 1 is sink!")
 # print("output of wire 2 is sink!")
 
 print("starts the simulation and runs it until the simulation time reaches or exceeds 100")
-env.run(until=100)
+env.run(until=1000)
 print("Done with running the simulation")
 
 print("Flow 1 packet delays: " +
