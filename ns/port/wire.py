@@ -41,7 +41,7 @@ class Wire:
         self.begin_transmissions = {}  # Dictionary to store begin_transmission times
         
         self.packets_dropped = 0
-
+        # self.epsilon = 1e-9  # A small epsilon time to handle collision detection
         self.debug = debug
         self.action = env.process(self.run())
         # Loss period generator configuration
@@ -52,48 +52,48 @@ class Wire:
 
     def run(self):
         """The generator function used in simulations."""
-        print("propagation delay is: ",self.delay_dist()) # check propagation delay
+        print("Enters wire at: ",self.env.now) # check propagation delay
         while True:
             packet = yield self.store.get()
             begin_transmission = packet.begin_transmission
             packet_id = packet.packet_id
-    
+
             if begin_transmission in self.begin_transmissions: 
                 # Collision
-                print(f"collision at {begin_transmission}!")
+                print(f"Collision at {begin_transmission}! Flow ID: {packet.flow_id}, Packet ID: {packet.packet_id}")
                 self.begin_transmissions[begin_transmission].append(packet_id) #  Append the current packet's ID to the list of packet IDs associated with it
                 self.packets_dropped += 1
-                print("Dropped! because of collision on wire #{} at {:.3f}: {}".format(
-                        self.wire_id, self.env.now, packet))
+                print("Dropped! because of collision on wire at {:.3f}: {}".format(
+                        self.env.now, packet))
             else:
                 self.begin_transmissions[begin_transmission] = [packet_id]
            
             # printing the list
             # for begin_time, packet_ids in self.begin_transmissions.items():
             #     print(f"Begin Transmission Time: {begin_time}, Packet IDs: {packet_ids}")
+                
+                # if no collision the continue
+                print("good period?", self.loss_period_generator.is_good_period(packet.current_time, packet.begin_transmission))
+                print("current time is: ", packet.current_time)
+                # loss_dist can be removed
+                if self.loss_dist is None or not self.loss_period_generator.is_good_period(packet.current_time, packet.begin_transmission):
+                    # Packet is dropped during bad periods
+                    self.packets_dropped += 1
+                    print("Dropped! on wire #{} at {:.3f}: {}".format(
+                            self.wire_id, self.env.now, packet))
+                else:
+                    print("Not dropped in good period!")
+                    # Packet is not dropped during good periods
+                    queued_time = self.env.now - packet.current_time
+                    delay = self.delay_dist()
 
-            print("good period?", self.loss_period_generator.is_good_period(packet.current_time, packet.begin_transmission))
-            print("current time is: ", packet.current_time)
-            # loss_dist can be removed
-            if self.loss_dist is None or not self.loss_period_generator.is_good_period(packet.current_time, packet.begin_transmission):
-                # Packet is dropped during bad periods
-                self.packets_dropped += 1
-                print("Dropped! on wire #{} at {:.3f}: {}".format(
-                        self.wire_id, self.env.now, packet))
-            else:
-                print("Not dropped in good period!")
-                # Packet is not dropped during good periods
-                queued_time = self.env.now - packet.current_time
-                print("queued_time", queued_time)
-                delay = self.delay_dist()
+                    if queued_time < delay:
+                        yield self.env.timeout(delay - queued_time)
+                    # in case of no collision and good period, pass the packet
+                    self.out.put(packet)
 
-                if queued_time < delay:
-                    yield self.env.timeout(delay - queued_time)
-
-                self.out.put(packet)
-
-                print("Left wire #{} at {:.3f}: {}".format(
-                        self.wire_id, self.env.now, packet))
+                    print("Left wire #{} at {:.3f}: {}".format(
+                            self.wire_id, self.env.now, packet))
 
             # Calculate the loss rate and print statistics
             if self.packets_rec > 0:
@@ -109,7 +109,6 @@ class Wire:
         self.packets_rec += 1
         if self.debug:
             print(f"Entered wire #{self.wire_id} at {self.env.now}: {packet} ")
-
         packet.current_time = self.env.now
         return self.store.put(packet)
 
