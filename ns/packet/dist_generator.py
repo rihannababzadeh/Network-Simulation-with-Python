@@ -63,7 +63,7 @@ class DistPacketGenerator:
             csv_reader = csv.reader(file)
             next(csv_reader)  # Skip the first line (header)
         # keeps the generator function running as long as the current simulation time
-        #while self.env.now < self.finish:
+        # while self.env.now < self.finish:
             # wait for next transmission
             for row in csv_reader:
                 yield self.env.timeout(self.arrival_dist())
@@ -84,8 +84,8 @@ class DistPacketGenerator:
                 packet.payload = row  
 
                 print(
-                        f"Sent packet {packet.packet_id} with flow_id {packet.flow_id} at "
-                        f"time {self.env.now}. Payload: {packet.payload}")
+                        f"*Sent packet {packet.packet_id} with flow_id {packet.flow_id} at "
+                        f"time {self.env.now}. Payload: {packet.payload} from pg")
                 
                 if self.debug:
                     print(
