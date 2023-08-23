@@ -7,6 +7,7 @@ the network.
 import random
 import numpy # to create loss periods
 import simpy
+from ns.port.slot import Slot
 
 
 class Wire:
@@ -49,7 +50,6 @@ class Wire:
         mean_b, mean_g = 10, 50     # Mean values for exponential distributions, duration of bad and good periods
         self.loss_period_generator = LossPeriodGenerator(seed_b, seed_g, mean_b, mean_g)
 
-
     def run(self):
         """The generator function used in simulations."""
         print("Enters wire at: ",self.env.now) # check propagation delay
@@ -57,22 +57,26 @@ class Wire:
             packet = yield self.store.get()
             begin_transmission = packet.begin_transmission
             packet_id = packet.packet_id
-
-            if begin_transmission in self.begin_transmissions: 
-                # Collision
-                print(f"Collision at {begin_transmission}! Flow ID: {packet.flow_id}, Packet ID: {packet.packet_id}")
-                self.begin_transmissions[begin_transmission].append(packet_id) #  Append the current packet's ID to the list of packet IDs associated with it
-                self.packets_dropped += 1
-                print("Dropped! because of collision on wire at {:.3f}: {}".format(
-                        self.env.now, packet))
-            else:
-                self.begin_transmissions[begin_transmission] = [packet_id]
+            # Old code
+            # if begin_transmission in self.begin_transmissions: 
+            #     # Collision
+            #     print(f"Collision at {begin_transmission}! Flow ID: {packet.flow_id}, Packet ID: {packet.packet_id}")
+            #     self.begin_transmissions[begin_transmission].append(packet_id) #  Append the current packet's ID to the list of packet IDs associated with it
+            #     self.packets_dropped += 1
+            #     print("Dropped! because of collision on wire at {:.3f}: {}".format(
+            #             self.env.now, packet))
+            # else:
+            #     self.begin_transmissions[begin_transmission] = [packet_id]
            
             # printing the list
             # for begin_time, packet_ids in self.begin_transmissions.items():
             #     print(f"Begin Transmission Time: {begin_time}, Packet IDs: {packet_ids}")
                 
-                # if no collision the continue
+                # New code, help from Slot: if no collision the continue
+            if Slot.has_at_least_two_slots_with_packets():
+                        print("COLLISION: Multiple transmission detected in wire!")
+                        self.packets_dropped += 1
+            else: # if no collision, check for good or bad period   
                 print("good period?", self.loss_period_generator.is_good_period(packet.current_time, packet.begin_transmission))
                 print("current time is: ", packet.current_time)
                 # loss_dist can be removed
@@ -81,19 +85,22 @@ class Wire:
                     self.packets_dropped += 1
                     print("Dropped! on wire #{} at {:.3f}: {}".format(
                             self.wire_id, self.env.now, packet))
-                else:
+                else: # good period
                     print("Not dropped in good period!")
                     # Packet is not dropped during good periods
                     queued_time = self.env.now - packet.current_time
                     delay = self.delay_dist()
+                    # If queued time for this packet is greater than its propagation delay,
+                    # it implies that the previous packet had experienced a longer delay.
+                    # Since out-of-order delivery is not supported in simulation, deliver
+                    # to the next component immediately.
 
                     if queued_time < delay:
                         yield self.env.timeout(delay - queued_time)
                     # in case of no collision and good period, pass the packet
                     self.out.put(packet)
-
                     print("Left wire #{} at {:.3f}: {}".format(
-                            self.wire_id, self.env.now, packet))
+                                self.wire_id, self.env.now, packet))
 
             # Calculate the loss rate and print statistics
             if self.packets_rec > 0:
@@ -111,9 +118,8 @@ class Wire:
             print(f"Entered wire #{self.wire_id} at {self.env.now}: {packet} ")
         packet.current_time = self.env.now
         return self.store.put(packet)
-
+    
 # trying to create losses
-
 class LossPeriodGenerator:
     """
         Initializes the LossPeriodGenerator.
@@ -153,20 +159,6 @@ class LossPeriodGenerator:
         """
         # If the timestamp is greater than the current good_high, it means the current period is a bad period
         # with bursty loss.
-
-        
-        # if self.good_low <= timestamp < self.good_high:
-        #     print(f"timestamp of packet {timestamp} is between low: {self.good_low} and high : {self.good_high}")
-        #     # If the timestamp is within the current good period interval, it's a good period.
-        #     return True
-        # else:
-        #     # If the timestamp is outside the current good period interval, it's a bad period.
-        #     # Calculate the start and end times for the next good period.
-        #     print(f"timestamp of packet {timestamp} is outside the good interval: {self.good_low} and {self.good_high}")
-        #     if(timestamp > self.good_high): # we need to know the next good period
-        #         self.good_low = self.good_high + self.rng_b.exponential(self.mean_b) 
-        #         self.good_high = self.good_low + self.rng_g.exponential(self.mean_g)
-        #     return False
 
         while timestamp >= self.good_high:
             print(f"timestamp of packet {timestamp} is greater than good high:  {self.good_high}")
