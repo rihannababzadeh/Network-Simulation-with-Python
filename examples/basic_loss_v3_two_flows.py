@@ -18,15 +18,12 @@ def arrival_1():
     """ Packets arrive with a constant interval of 1.5 seconds. """
     return 1.5
 
-
 def arrival_2():
     """ Packets arrive with a constant interval of 2.0 seconds. """
-    return 1.5 #2.0
-
+    return 3 #2.0
 
 def delay_dist():
     return 0.1
-
 
 def packet_size():
     return 24 #return int(expovariate(0.01))
@@ -59,11 +56,11 @@ print("start!")
 env = simpy.Environment()
 print("environment activated!")
 
-port1 = Port(env, rate)
-print(port1)
+# port1 = Port(env, rate)
+# print(port1)
 
-port2 = Port(env, rate)
-print(port2)
+# port2 = Port(env, rate)
+# print(port2)
 
 # port = Port(env, rate)
 # print(port)
