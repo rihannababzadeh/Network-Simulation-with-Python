@@ -48,7 +48,7 @@ class PacketSink:
         self.absolute_arrivals = absolute_arrivals
         self.waits = dd(list)
         self.arrivals = dd(list)
-        self.packets_received = dd(lambda: 0) # defaultdict that keeps track of the total number of packets received for each flow
+        self.packets_received = dd(lambda: 0) # default dict that keeps track of the total number of packets received for each flow
         self.bytes_received = dd(lambda: 0)
         self.packet_sizes = dd(list)
         self.packet_times = dd(list)

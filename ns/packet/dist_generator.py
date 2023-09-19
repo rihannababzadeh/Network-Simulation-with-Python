@@ -57,8 +57,9 @@ class DistPacketGenerator:
 
     def run(self):
         """The generator function used in simulations."""
+        print("initial delay in dis generator: ",self.initial_delay)
         # the generator function pause for the specified initial_delay duration before continuing execution
-        yield self.env.timeout(self.initial_delay) 
+        yield self.env.timeout(self.initial_delay)
         with open(r'C:\Users\reyha\Desktop\network-simulation\Network-Simulation-with-Python\data\data.csv', 'r') as file:
             csv_reader = csv.reader(file)
             next(csv_reader)  # Skip the first line (header)
@@ -67,7 +68,7 @@ class DistPacketGenerator:
             # wait for next transmission
             for row in csv_reader:
                 yield self.env.timeout(self.arrival_dist())
-
+                print("before packet sent delay in dis generator: ",self.arrival_dist)
                 self.packets_sent += 1
                 payload = row  # Example payload
                 packet = Packet(self.env.now,

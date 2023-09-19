@@ -11,7 +11,7 @@ import simpy
 from ns.packet.dist_generator import DistPacketGenerator
 from ns.packet.sink import PacketSink
 from ns.port.wire import Wire
-from ns.port.port import Port
+# from ns.port.port import Port
 from ns.port.slot import Slot
 
 def arrival_1():
@@ -154,10 +154,15 @@ print("starts the simulation and runs it until the simulation time reaches or ex
 env.run(until=100)
 print("Done with running the simulation")
 
+print("Flow 1 packet times: " +
+      ", ".join(["{:.2f}".format(x) for x in ps.packet_times['flow_1']]))
+print("Flow 2 packet times: " +
+      ", ".join(["{:.2f}".format(x) for x in ps.packet_times['flow_2']]))
+
 print("Flow 1 packet delays: " +
-      ", ".join(["{:.2f}".format(x) for x in ps.waits['flow_1']]))
+      ", ".join(["{}".format(x) for x in ps.waits['flow_1']]))
 print("Flow 2 packet delays: " +
-      ", ".join(["{:.2f}".format(x) for x in ps.waits['flow_2']]))
+      ", ".join(["{}".format(x) for x in ps.waits['flow_2']]))
 
 print("Packet arrival times in flow 1: " +
       ", ".join(["{:.2f}".format(x) for x in ps.arrivals['flow_1']]))
