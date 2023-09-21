@@ -103,14 +103,14 @@ class PacketSink:
         self.bytes_received[rec_index] += packet.size
 
         # calculate loss rate
-        #rec-index shows the packet id
-        # if self.packets_received[rec_index] > 0:
-        #     total_packets_sent = len(self.packets_sent)  # Total packets sent by the source
-        #     packets_arrived = len(self.arrivals[rec_index])  # Packets that arrived for the specific flow
-        #     packets_dropped = total_packets_sent - packets_arrived  # Packets dropped for the specific flow
+        # rec-index shows the packet id
+        if self.packets_received[rec_index] > 0:
+            total_packets_sent = len(self.packets_sent)  # Total packets sent by the source
+            packets_arrived = len(self.arrivals[rec_index])  # Packets that arrived for the specific flow
+            packets_dropped = total_packets_sent - packets_arrived  # Packets dropped for the specific flow
 
-        #     if total_packets_sent > 0:
-        #         loss_rate = (packets_dropped / total_packets_sent) * 100  # Loss rate calculation
-        #         print(f"Loss rate for {rec_index}: {loss_rate:.2f}%")
-        #     else:
-        #         print(f"No packets sent for {rec_index}, cannot calculate loss rate.")
+            if total_packets_sent > 0:
+                loss_rate = (packets_dropped / total_packets_sent) * 100  # Loss rate calculation
+                print(f"Loss rate {loss_rate:.2f}%")
+            else:
+                print(f"No packets sent for {rec_index}, cannot calculate loss rate.")
