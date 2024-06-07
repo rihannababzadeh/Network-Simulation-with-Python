@@ -1,0 +1,31 @@
+Arrival 1 1.5
+Arrival 2 1.5
+
+Packet Loss Rate for Wire #1: 100.00%. 132 packets in total and 132 packets lost
+before packet yield and wire yield:  99.0
+Number of items in store: 0
+Done with running the simulation
+Flow 1 packet times:
+Flow 2 packet times:
+Flow 1 packet delays:
+Flow 2 packet delays:
+Packet arrival times in flow 1:
+Packet arrival times in flow 2:
+
+Arrival 1 1.5
+Arrival 2 3
+Flow 1 packet times: 1.50, 7.50, 10.50, 13.50, 16.50, 19.50, 22.50, 25.50, 28.50, 31.50, 34.50, 37.50, 40.50, 43.50, 46.50, 49.50, 52.50, 55.50, 58.50, 61.50, 64.50, 67.50, 70.50, 73.50, 76.50, 79.50, 82.50, 85.50, 88.50
+Flow 2 packet times:
+Flow 1 packet delays: 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5
+Flow 2 packet delays:
+Packet arrival times in flow 1: 3.00, 9.00, 12.00, 15.00, 18.00, 21.00, 24.00, 27.00, 30.00, 33.00, 36.00, 39.00, 42.00, 45.00, 48.00, 51.00, 54.00, 57.00, 60.00, 63.00, 66.00, 69.00, 72.00, 75.00, 78.00, 81.00, 84.00, 87.00, 90.00
+Packet arrival times in flow 2:
+Arrival 1 3
+Arrival 2 1.5
+
+Flow 1 packet times:
+Flow 2 packet times: 1.50, 7.50, 10.50, 13.50, 16.50, 19.50, 22.50, 25.50, 28.50, 31.50, 34.50, 37.50, 40.50, 43.50, 46.50, 49.50, 52.50, 55.50, 58.50, 61.50, 64.50, 67.50, 70.50, 73.50, 76.50, 79.50, 82.50, 85.50, 88.50
+Flow 1 packet delays:
+Flow 2 packet delays: 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5, 1.5
+Packet arrival times in flow 1:
+Packet arrival times in flow 2: 3.00, 9.00, 12.00, 15.00, 18.00, 21.00, 24.00, 27.00, 30.00, 33.00, 36.00, 39.00, 42.00, 45.00, 48.00, 51.00, 54.00, 57.00, 60.00, 63.00, 66.00, 69.00, 72.00, 75.00, 78.00, 81.00, 84.00, 87.00, 90.00

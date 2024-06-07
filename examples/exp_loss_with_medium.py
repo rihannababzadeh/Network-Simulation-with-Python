@@ -12,7 +12,7 @@ from ns.packet.dist_generator import DistPacketGenerator
 from ns.packet.sink import PacketSink
 from ns.port.wire import Wire
 from ns.port.port import Port
-import Medium
+# import Medium
 
 def arrival_1():
     """ Packets arrive with a constant interval of 1.5 seconds. """
@@ -21,7 +21,7 @@ def arrival_1():
 
 def arrival_2():
     """ Packets arrive with a constant interval of 2.0 seconds. """
-    return 2.0
+    return 2 # change from 2.0
 
 
 def delay_dist():
@@ -60,7 +60,7 @@ env = simpy.Environment()
 print("environment activated!")
 
 # Create an instance of the Medium class
-medium = Medium(env, slots=4)  # Set the number of slots in each frame
+# medium = Medium(env, slots=4)  # Set the number of slots in each frame
 
 port1 = Port(env, rate)
 print(port1)
@@ -70,34 +70,34 @@ print("packet sink set!")
 pg1 = DistPacketGenerator(env, "flow_1", arrival_1, packet_size, flow_id=0)
 print("flow 1 packet generator set!")
 
-# pg2 = DistPacketGenerator(env, "flow_2", arrival_2, packet_size, flow_id=1)
-# print("flow 2 packet generator set!")
+pg2 = DistPacketGenerator(env, "flow_2", arrival_2, packet_size, flow_id=1)
+print("flow 2 packet generator set!")
 
 wire1 = Wire(env, partial(random.gauss, 0.1, 0.02), loss_dist=loss_dist, wire_id=1, debug=True)
 print("wire 1 with loss set!")
 
-# print("delay dist for wire2:", delay_dist())
-# wire2 = Wire(env, delay_dist, wire_id=2, debug=True)
-# print("wire 2 set!")
+print("delay dist for wire2:", delay_dist())
+wire2 = Wire(env, delay_dist, wire_id=2, debug=True)
+print("wire 2 set!")
 
-# pg1.out = wire1
-# print("pg1 packets are sent to wire 1!")
+pg1.out = wire1
+print("pg1 packets are sent to wire 1!")
 pg1.out = port1
 print("pg1 packets are sent to port 1!")
 
 port1.out = wire1
 
 # Connect the medium to the wire
-medium.out = wire1
-# Connect the medium to the packet sink
-medium.receiver = ps
+# medium.out = wire1
+# # Connect the medium to the packet sink
+# medium.receiver = ps
 
 
-# pg2.out = wire2
-# print("pg2 packets are sent to wire 2!")
+pg2.out = wire2
+print("pg2 packets are sent to wire 2!")
 
-# wire2.out = ps
-# print("output of wire 2 is sink!")
+wire2.out = ps
+print("output of wire 2 is sink!")
 
 print("starts the simulation and runs it until the simulation time reaches or exceeds 100")
 env.run(until=100)

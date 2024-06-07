@@ -81,15 +81,14 @@ class Port:
 
             self.busy = 1
             self.busy_packet_size = packet.size
-
             if self.rate > 0:
                 packet.begin_transmission = self.env.now # Record the begin_transmission time
-                print("Begin transmission at: ",packet.begin_transmission)
+                print("Begins port transmission at: ",packet.begin_transmission, packet.flow_id)
                 # current time
                 yield self.env.timeout(packet.size * 8.0 / self.rate) # Transmission time of the packet based on the rate
                 self.byte_size -= packet.size # The decrease in the size of the queue after sending out the packet
                 print("Packet size in Byte: ", packet.size)
-                print("Ends transmission at: ",self.env.now)
+                print("Ends port transmission at: ",self.env.now)
 
             if self.zero_downstream_buffer:
                 self.out.put(packet,

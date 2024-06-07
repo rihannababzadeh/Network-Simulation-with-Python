@@ -8,16 +8,16 @@ from random import expovariate
 import simpy
 from ns.packet.dist_generator import DistPacketGenerator
 from ns.packet.sink import PacketSink
-from ns.port.wire import Wire
 from ns.port.slot import Slot
+from ns.port.wire import Wire
 
 def arrival_1():
     """ Packets arrive with a constant interval of 1.5 seconds. """
-    return 1.5
+    return 3
 
 def arrival_2():
     """ Packets arrive with a constant interval of 3 seconds. """
-    return 3
+    return 1.5
 
 def delay_dist():
     return 0.1
